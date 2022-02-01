@@ -7,7 +7,6 @@ plugins {
 group = 'com.kennenalphateam'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
-
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
@@ -18,19 +17,30 @@ repositories {
 	mavenCentral()
 }
 
+
 dependencies {
-//	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	ext.restAssuredVersion='4.5.0'
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.4'
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
 
 	implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 	implementation 'com.squareup.retrofit2:converter-jackson:2.9.0'
+
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	testImplementation 'org.springframework.security:spring-security-test'
 
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+	testImplementation "io.rest-assured:json-path:${restAssuredVersion}"
+	testImplementation "io.rest-assured:xml-path:${restAssuredVersion}"
+	testImplementation "io.rest-assured:json-schema-validator:${restAssuredVersion}"
 }
 
 test {
