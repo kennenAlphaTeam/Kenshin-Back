@@ -40,4 +40,8 @@ public class User extends BaseTimeEntity {
         this.mihoyoCookie = mihoyoCookie;
         this.mihoyoId = mihoyoId;
     }
+
+    public void updateCookie(String mihoyoCookie) {
+        this.mihoyoCookie = mihoyoCookie;
+    }
 }
