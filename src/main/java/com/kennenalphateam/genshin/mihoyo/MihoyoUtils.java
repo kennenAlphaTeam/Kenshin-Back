@@ -41,6 +41,17 @@ public class MihoyoUtils {
         return MihoyoServer.getServerFromCode(code).getServerName();
     }
 
+    public static String getMihoyoUidFromCookie(String cookie) {
+        int startIdx = cookie.indexOf("uid");
+        if (startIdx == -1)
+            ; //exception
+        startIdx += 4;
+        int endIdx = cookie.indexOf(";", startIdx);
+        if (endIdx == -1)
+            endIdx = cookie.length();
+        return cookie.substring(startIdx, endIdx);
+    }
+
     @Getter
     public enum MihoyoServer {
         USA(6, "os_usa"),
