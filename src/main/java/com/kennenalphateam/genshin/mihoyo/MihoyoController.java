@@ -1,35 +1,31 @@
 package com.kennenalphateam.genshin.mihoyo;
 
+import com.kennenalphateam.genshin.auth.SessionUser;
 import com.kennenalphateam.genshin.mihoyo.api.MihoyoApi;
 import com.kennenalphateam.genshin.mihoyo.api.MihoyoRetrofitHelper;
+import com.kennenalphateam.genshin.user.LoginUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import retrofit2.http.GET;
 
 @Slf4j
+@RequestMapping("mihoyo")
 @RestController
 @RequiredArgsConstructor
 public class MihoyoController {
-
-    private final MihoyoApi mihoyoApi;
-    private final MihoyoRetrofitHelper helper;
-    @Value("${mihoyo.default.cookie}")
-    private String defaultCookie;
+    private final MihoyoService mihoyoService;
 
     @GetMapping("profile/{uid}")
     @ResponseBody
-    public String getProfile(@PathVariable String uid) {
-        String cookie = defaultCookie;
-        String result = helper.requestBody(mihoyoApi.getProfile(MihoyoUtils.getServerNameFromUid(uid), uid, cookie), String.class);
-        return result;
+    public String getProfile(@PathVariable String uid, @LoginUser SessionUser user) {
+        return mihoyoService.getProfile(uid, user.getMihoyoCookie());
     }
 
     @GetMapping("daily-note/{uid}")
     @ResponseBody
-    public String getDailyNote(@PathVariable String uid) {
-        String cookie = defaultCookie;
-        String result = helper.requestBody(mihoyoApi.getDailyNote(MihoyoUtils.getServerNameFromUid(uid), uid, cookie), String.class);
-        return result;
+    public String getDailyNote(@PathVariable String uid, @LoginUser SessionUser user) {
+        return mihoyoService.getDailyNote(uid, user.getMihoyoCookie());
     }
 }
