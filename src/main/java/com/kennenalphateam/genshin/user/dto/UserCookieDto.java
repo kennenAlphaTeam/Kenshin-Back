@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class UserCookieDto {
-    String cookie;
+    private String cookie;
 }

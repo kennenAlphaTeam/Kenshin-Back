@@ -19,7 +19,7 @@ public class UserController {
 
     @PutMapping("me/cookie")
     void updateUserCookie(@LoginUser SessionUser user, @RequestBody UserCookieDto dto) {
-        SessionUser updatedUser = userService.updateUserCookie(user, dto);
+        SessionUser updatedUser = userService.updateUserInfo(user, dto);
         httpSession.setAttribute("user", updatedUser);
     }
 }
