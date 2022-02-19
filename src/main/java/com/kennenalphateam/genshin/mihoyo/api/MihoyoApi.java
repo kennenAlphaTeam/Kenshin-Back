@@ -1,9 +1,8 @@
 package com.kennenalphateam.genshin.mihoyo.api;
 
+import com.kennenalphateam.genshin.mihoyo.dto.CharacterRequest;
 import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Header;
-import retrofit2.http.Query;
+import retrofit2.http.*;
 
 public interface MihoyoApi {
 
@@ -15,4 +14,7 @@ public interface MihoyoApi {
 
     @GET("game_record/card/wapi/getGameRecordCard")
     Call<MihoyoResponse> getGameRecordCard(@Query("uid") String mihoyoId, @Header("Cookie") String cookie);
+
+    @POST("game_record/genshin/api/character")
+    Call<MihoyoResponse> getCharacterInfoList(@Body CharacterRequest request, @Header("Cookie") String cookie);
 }
