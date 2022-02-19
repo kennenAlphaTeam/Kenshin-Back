@@ -33,9 +33,8 @@ public class MihoyoRetrofitHelper {
                 return (T) objectMapper.writeValueAsString(data);
             return objectMapper.convertValue(data, dataType);
         } catch (JsonProcessingException e) {
-            log.error(response.getMessage());
-            e.printStackTrace();
-            throw  new RuntimeException("");
+            log.error("Mihoyo api parsing error retcode = {}, {}", response.getRetcode(), response.getMessage());
+            throw new MihoyoApiException();
         }
     }
 
@@ -44,12 +43,16 @@ public class MihoyoRetrofitHelper {
             return call.execute();
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("");
+            log.error("Mihoyo request execute failed");
+            throw new MihoyoApiException();
         }
     }
 
     public void checkResponseSuccessful(Response<MihoyoResponse> response) {
-        if (!response.isSuccessful() || response.body() == null || response.body().getRetcode() != 0)
-            throw new RuntimeException("");
+        if (!response.isSuccessful() || response.body() == null || response.body().getRetcode() != 0) {
+            if (response.body() != null)
+                log.error("Mihoyo request failed {} {}", response.body().getRetcode(), response.body().getMessage());
+            throw new MihoyoApiException();
+        }
     }
 }
