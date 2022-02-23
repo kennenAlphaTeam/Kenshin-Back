@@ -13,6 +13,7 @@ public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomOAuth2UserService oAuth2UserService;
     private final LoginSuccessHandler loginSuccessHandler;
+    private final UserAuthenticationEntryPoint userAuthenticationEntryPoint;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -20,7 +21,8 @@ public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/").permitAll()
+                    .antMatchers("/mihoyo/**").authenticated()
+                    .antMatchers("/user/**").authenticated()
                     .anyRequest().permitAll()
                 .and()
                 .oauth2Login()
@@ -33,8 +35,11 @@ public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                 .userInfoEndpoint()
                     .userService(oAuth2UserService)
-                    .and()
+                .and()
                 .successHandler(loginSuccessHandler)
+                .and()
+                .exceptionHandling()
+                    .authenticationEntryPoint(userAuthenticationEntryPoint)
                 .and();
     }
 }
