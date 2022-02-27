@@ -15,13 +15,13 @@ public class MihoyoService {
     public String getProfile(String genshinUid, String cookie) {
         String server = MihoyoUtils.getServerNameFromUid(genshinUid);
 
-        return helper.requestBody(mihoyoApi.getProfile(server, genshinUid, cookie), String.class);
+        return helper.requestBody(mihoyoApi.getProfile(cookie, genshinUid, server), String.class);
     }
 
     public String getDailyNote(String genshinUid, String cookie) {
         String server = MihoyoUtils.getServerNameFromUid(genshinUid);
 
-        return helper.requestBody(mihoyoApi.getDailyNote(server, genshinUid, cookie), String.class);
+        return helper.requestBody(mihoyoApi.getDailyNote(cookie, server, genshinUid), String.class);
     }
 
     public String getCharacterInfoList(String genshinUid, int[] characterIds, String cookie) {
@@ -31,6 +31,6 @@ public class MihoyoService {
                 .server(server)
                 .genshinUid(genshinUid)
                 .build();
-        return helper.requestBody(mihoyoApi.getCharacterInfoList(body, cookie), String.class);
+        return helper.requestBody(mihoyoApi.getCharacterInfoList(cookie, body), String.class);
     }
 }
