@@ -1,5 +1,7 @@
 package com.kennenalphateam.genshin.mihoyo;
 
+import com.kennenalphateam.genshin.mihoyo.exception.InvalidCookieException;
+import com.kennenalphateam.genshin.mihoyo.exception.InvalidUidException;
 import lombok.Getter;
 import org.apache.tomcat.util.buf.HexUtils;
 
@@ -36,20 +38,28 @@ public class MihoyoUtils {
     }
 
     public static String getServerNameFromUid(String uid) {
-        int code = Integer.parseInt(uid.substring(0, 1));
+        int code;
+        try {
+            code = Integer.parseInt(uid.substring(0, 1));
+        } catch (NumberFormatException e) {
+            throw new InvalidUidException();
+        }
 
         return MihoyoServer.getServerFromCode(code).getServerName();
     }
 
     public static String getMihoyoUidFromCookie(String cookie) {
-        int startIdx = cookie.indexOf("uid");
+        int startIdx = cookie.indexOf("ltuid=");
         if (startIdx == -1)
-            ; //exception
-        startIdx += 4;
+            throw new InvalidCookieException();
+        startIdx += 6;
         int endIdx = cookie.indexOf(";", startIdx);
         if (endIdx == -1)
             endIdx = cookie.length();
-        return cookie.substring(startIdx, endIdx);
+        String uid = cookie.substring(startIdx, endIdx);
+        if (uid.isEmpty())
+            throw new InvalidCookieException();
+        return uid;
     }
 
     @Getter
@@ -69,7 +79,7 @@ public class MihoyoUtils {
         public static MihoyoServer getServerFromCode(int serverCode) {
             return Arrays.stream(MihoyoServer.values()).filter(mihoyoServer ->
                     mihoyoServer.serverCode == serverCode
-            ).findFirst().get();
+            ).findFirst().orElseThrow(InvalidUidException::new);
         }
     }
 }
