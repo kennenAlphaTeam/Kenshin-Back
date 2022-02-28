@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 public class MihoyoController {
     private final MihoyoService mihoyoService;
 
-    @GetMapping("profile/{uid}")
-    public String getProfile(@PathVariable String genshinUid, @LoginUser SessionUser user) {
+    @GetMapping("profile/{genshinUid}")
+    public String getProfile(@LoginUser SessionUser user, @PathVariable String genshinUid) {
         return mihoyoService.getProfile(genshinUid, user.getMihoyoCookie());
     }
 
