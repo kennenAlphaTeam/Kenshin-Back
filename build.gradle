@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.kennenalphateam'
-version = '0.0.1-SNAPSHOT'
+version = '0.1.0'
 sourceCompatibility = '11'
 configurations {
 	compileOnly {
@@ -45,6 +45,10 @@ compileOnly 'org.projectlombok:lombok'
 	testImplementation "io.rest-assured:json-path:${restAssuredVersion}"
 	testImplementation "io.rest-assured:xml-path:${restAssuredVersion}"
 	testImplementation "io.rest-assured:json-schema-validator:${restAssuredVersion}"
+}
+
+jar {
+	enabled=false
 }
 
 test {
