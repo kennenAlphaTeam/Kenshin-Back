@@ -23,6 +23,7 @@ public class GenshinInfoService {
 
     public MihoyoGameCard getValidMihoyoGameCard(String cookie) {
         String mihoyoUid = MihoyoUtils.getMihoyoUidFromCookie(cookie);
+
         MihoyoGameCardDto body = helper.requestBody(mihoyoApi.getGameRecordCard(cookie, mihoyoUid), MihoyoGameCardDto.class);
         MihoyoGameCard[] cards = body.getGameCards();
 
@@ -34,6 +35,7 @@ public class GenshinInfoService {
     public boolean isValidMihoyoGameCard(MihoyoGameCard card) {
         if (card == null)
             return false;
+
         // asia 서버만 지원합니다.
         return card.getRegion().equals("os_asia") && card.getGameId() == 2;
     }

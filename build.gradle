@@ -36,7 +36,7 @@ dependencies {
 	implementation "org.springdoc:springdoc-openapi-ui:1.6.6"
 	implementation 'org.springdoc:springdoc-openapi-security:1.6.6'
 
-	compileOnly 'org.projectlombok:lombok'
+compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'

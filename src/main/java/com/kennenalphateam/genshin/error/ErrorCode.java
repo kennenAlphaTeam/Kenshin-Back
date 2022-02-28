@@ -15,7 +15,6 @@ public enum ErrorCode {
     INVALID_GENSHIN_UID(HttpStatus.BAD_REQUEST, "잘못된 UID입니다."),
 
     USER_UNAUTHORIZED_ERROR(HttpStatus.UNAUTHORIZED, "인증되지 않은 유저입니다.")
-
     ;
     private final HttpStatus httpStatus;
     private final String detail;
