@@ -29,7 +29,7 @@ public class MihoyoController {
     }
 
     @GetMapping("character")
-    public String getCharacterInfoList(@LoginUser SessionUser user, @RequestParam(name = "characterIds") int[] characterIds) {
-        return mihoyoService.getCharacterInfoList(user.getGenshinUid(), characterIds, user.getMihoyoCookie());
+    public String getCharacterInfoList(@LoginUser SessionUser user) {
+        return mihoyoService.getCharacterInfoList(user.getGenshinUid(), user.getMihoyoCookie());
     }
 }

@@ -19,6 +19,7 @@ public class MihoyoRetrofitHelper {
     private final ObjectMapper objectMapper;
 
     public <T> T requestBody(Call<MihoyoResponse> call, Class<T> dataType) {
+        log.info("Call mihoyo api : {}", call.request().url());
         Response<MihoyoResponse> response = executeCall(call);
 
         checkResponseSuccessful(response);
@@ -50,8 +51,10 @@ public class MihoyoRetrofitHelper {
 
     public void checkResponseSuccessful(Response<MihoyoResponse> response) {
         if (!response.isSuccessful() || response.body() == null || response.body().getRetcode() != 0) {
-            if (response.body() != null)
+            if (response.body() != null) {
+                    log.error(response.body().toString());
                 log.error("Mihoyo request failed {} {}", response.body().getRetcode(), response.body().getMessage());
+            }
             throw new MihoyoApiException();
         }
     }
