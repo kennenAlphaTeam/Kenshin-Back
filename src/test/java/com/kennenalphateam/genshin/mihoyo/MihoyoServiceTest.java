@@ -39,7 +39,7 @@ class MihoyoServiceTest {
         String responseMock = "success";
         String genshinUid = "819688319";
         String cookie = "cookie";
-        when(api.getProfile(anyString(), anyString(), anyString())).thenReturn(callMock);
+        when(api.getProfile(anyString(), eq("os_asia"), eq(genshinUid))).thenReturn(callMock);
         when(helper.requestBody(callMock, String.class)).thenReturn(responseMock);
 
         String result = service.getProfile(genshinUid, cookie);
@@ -52,7 +52,7 @@ class MihoyoServiceTest {
         String responseMock = "success";
         String genshinUid = "819688319";
         String cookie = "cookie";
-        when(api.getDailyNote(anyString(), anyString(), anyString())).thenReturn(callMock);
+        when(api.getDailyNote(anyString(), eq("os_asia"), eq(genshinUid))).thenReturn(callMock);
         when(helper.requestBody(callMock, String.class)).thenReturn(responseMock);
 
         String result = service.getDailyNote(genshinUid, cookie);
@@ -65,12 +65,11 @@ class MihoyoServiceTest {
         String responseMock = "success";
         String genshinUid = "819688319";
         String cookie = "cookie";
-        int[] characterIds = {1, 2, 3};
 
-        when(api.getCharacterInfoList(anyString(), any())).thenReturn(callMock);
+        when(api.getCharacterInfoList(eq(cookie), any())).thenReturn(callMock);
         when(helper.requestBody(callMock, String.class)).thenReturn(responseMock);
 
-        String result = service.getCharacterInfoList(genshinUid, characterIds, cookie);
+        String result = service.getCharacterInfoList(genshinUid, cookie);
         assertEquals(result, responseMock);
     }
 }
