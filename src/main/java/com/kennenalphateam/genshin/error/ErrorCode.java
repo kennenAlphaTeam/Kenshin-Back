@@ -13,6 +13,7 @@ public enum ErrorCode {
     MIHOYO_REQUEST_ERROR(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     INVALID_COOKIE(HttpStatus.BAD_REQUEST, "잘못된 쿠키입니다."),
     INVALID_GENSHIN_UID(HttpStatus.BAD_REQUEST, "잘못된 UID입니다."),
+    UNREGISTERED_GENSHIN_USER(HttpStatus.UNAUTHORIZED, "Cookie를 등록하지 않은 유저입니다."),
 
     USER_UNAUTHORIZED_ERROR(HttpStatus.UNAUTHORIZED, "인증되지 않은 유저입니다.")
     ;
