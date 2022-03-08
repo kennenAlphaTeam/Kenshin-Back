@@ -1,5 +1,7 @@
 package com.kennenalphateam.genshin.user.entity;
 
+import com.kennenalphateam.genshin.error.ErrorCode;
+import com.kennenalphateam.genshin.error.ErrorException;
 import com.kennenalphateam.genshin.mihoyo.MihoyoUtils;
 import com.kennenalphateam.genshin.mihoyo.dto.GenshinIdCard;
 import com.kennenalphateam.genshin.user.util.OAuthType;
@@ -55,7 +57,6 @@ public class User extends BaseTimeEntity {
         this.genshinUid = genshinUid;
         this.nickname = nickname;
     }
-
 
     public void updateCookie(String mihoyoCookie) {
         this.mihoyoCookie = mihoyoCookie;

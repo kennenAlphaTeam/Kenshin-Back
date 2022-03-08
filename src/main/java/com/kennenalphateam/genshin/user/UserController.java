@@ -1,6 +1,7 @@
 package com.kennenalphateam.genshin.user;
 
 import com.kennenalphateam.genshin.auth.SessionUser;
+import com.kennenalphateam.genshin.mihoyo.dto.GenshinIdCard;
 import com.kennenalphateam.genshin.user.dto.UserCookieDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +19,14 @@ public class UserController {
     private final HttpSession httpSession;
 
     @PutMapping("me/cookie")
-    void updateUserCookie(@LoginUser SessionUser user, @RequestBody UserCookieDto dto) {
+    GenshinIdCard updateUserCookie(@LoginUser SessionUser user, @RequestBody UserCookieDto dto) {
         SessionUser updatedUser = userService.updateUserInfo(user, dto);
         httpSession.setAttribute("user", updatedUser);
+        return userService.getGenshinIdCardBySessionUser(updatedUser);
+    }
+
+    @GetMapping("me/genshinIdCard")
+    public GenshinIdCard getGenshinIdCard(@LoginUser SessionUser user) {
+        return new GenshinIdCard(user);
     }
 }
