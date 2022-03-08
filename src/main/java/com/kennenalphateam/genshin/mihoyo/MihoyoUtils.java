@@ -3,11 +3,14 @@ package com.kennenalphateam.genshin.mihoyo;
 import com.kennenalphateam.genshin.mihoyo.exception.InvalidCookieException;
 import com.kennenalphateam.genshin.mihoyo.exception.InvalidUidException;
 import lombok.Getter;
+import okhttp3.Cookie;
 import org.apache.tomcat.util.buf.HexUtils;
 
+import java.io.StringReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MihoyoUtils {
 
@@ -60,6 +63,12 @@ public class MihoyoUtils {
         if (uid.isEmpty())
             throw new InvalidCookieException();
         return uid;
+    }
+
+    public static String minifyMihoyoCookie(String cookie) {
+        return Arrays.stream(cookie.split(";\\s*"))
+                .filter(s -> s.contains("ltoken=") || s.contains("ltuid="))
+                .collect(Collectors.joining(";"));
     }
 
     @Getter
