@@ -1,8 +1,8 @@
 package com.kennenalphateam.genshin.user;
 
 import com.kennenalphateam.genshin.auth.SessionUser;
-import com.kennenalphateam.genshin.error.ErrorException;
 import com.kennenalphateam.genshin.mihoyo.GenshinInfoService;
+import com.kennenalphateam.genshin.mihoyo.MihoyoUtils;
 import com.kennenalphateam.genshin.mihoyo.dto.GenshinIdCard;
 import com.kennenalphateam.genshin.user.dto.UserCookieDto;
 import com.kennenalphateam.genshin.user.entity.User;
@@ -22,10 +22,10 @@ public class UserService {
     }
 
     public SessionUser updateUserInfo(SessionUser sessionUser, UserCookieDto dto) {
-        String cookie = dto.getCookie();
+        String cookie = MihoyoUtils.minifyMihoyoCookie(dto.getCookie());
         User user = sessionUserToUser(sessionUser);
-
         GenshinIdCard genshinIdCard = genshinInfoService.getGenshinUidFromCookie(cookie);
+
         user.updateCookie(cookie);
         user.updateGenshinId(genshinIdCard);
         userRepository.save(user);
