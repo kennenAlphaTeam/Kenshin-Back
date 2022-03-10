@@ -28,13 +28,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return user;
     }
 
-    private void saveSessionUser(String registrationId, OAuth2User oAuth2User) {
+    public void saveSessionUser(String registrationId, OAuth2User oAuth2User) {
         User user = saveOrLoadUser(registrationId, oAuth2User.getName());
         SessionUser sessionUser = new SessionUser(user);
         httpSession.setAttribute("user", sessionUser);
     }
 
-    private User saveOrLoadUser(String registrationId, String oauthId) {
+    public User saveOrLoadUser(String registrationId, String oauthId) {
         OAuthType type = OAuthType.valueOf(registrationId.toUpperCase());
 
         User user = userRepository.findByOauthTypeAndOauthId(type, oauthId)
@@ -42,7 +42,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return userRepository.save(user);
     }
 
-    private User dataToUser(OAuthType type, String oauthId) {
+    public User dataToUser(OAuthType type, String oauthId) {
         return  User.builder().oauthType(type).oauthId(oauthId).build();
     }
 }

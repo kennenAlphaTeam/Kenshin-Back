@@ -1,0 +1,21 @@
+spring:
+  profiles: profile_name
+  datasource:
+    url: jdbc:postgresql://db_url:db_port/database
+    username: username
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: none # flyway 사용시 none
+  flyway:
+    enabled: true
+
+# proxy 설정시 forward header 사용 여부 확인
+server:
+  user-forward-headers: true
+  forward-headers-strategy: framework
+
+mihoyo:
+  rpc-client_type: 4
+  rpc-app_version: 1.5.0
+  rpc-language: ko-kr

@@ -3,3 +3,26 @@ spring:
     include:
     - test
     - oauth
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;INIT=CREATE SCHEMA IF NOT EXISTS genshin;MODE=LEGACY
+    username: SA
+    password:
+    initialization-mode: always
+  jpa:
+    show-sql: true
+    hibernate:
+      default_schema: genshin
+      ddl-auto: create-drop
+  flyway:
+    enabled: false
+
+logging:
+  level:
+    com.kennenalphateam.genshin: info
+    org.hibernate.SQL: debug
+
+mihoyo:
+  rpc-client_type: 4
+  rpc-app_version: 1.5.0
+  rpc-language: ko-kr
