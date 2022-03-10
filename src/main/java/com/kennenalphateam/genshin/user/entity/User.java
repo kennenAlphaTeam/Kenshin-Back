@@ -13,7 +13,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Table(schema = "genshin", name = "user")
+@Table(schema = "genshin", name = "`user`")
 @ToString(exclude = {"mihoyoCookie"})
 @NoArgsConstructor
 public class User extends BaseTimeEntity {
