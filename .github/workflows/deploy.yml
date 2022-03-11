@@ -74,7 +74,9 @@ jobs:
           echo "BUILD_DIR=~/app/build/$BUILD_NAME" >> $GITHUB_ENV
       - name: Copy build file to GCP
         run: |
-          MKDIR_COMMAND="mkdir -p ~/app/build/$build_name"
+          MKDIR_COMMAND="mkdir -p ~/app/build/$BUILD_NAME"
+          echo "mkdir command = $MKDIR_COMMAND"
+          echo "build file path = $BUILD_DIR/$BUILD_NAME"
           gcloud compute ssh --zone us-west4-b --ssh-key-file gcp_ssh_key ka@genshin --command "$MKDIR_COMMAND"
           gcloud compute scp --zone us-west4-b --ssh-key-file gcp_ssh_key upload/*.jar ka@genshin:$BUILD_DIR/$BUILD_NAME.jar
           gcloud compute scp --zone us-west4-b --ssh-key-file gcp_ssh_key upload/deploy.sh ka@genshin:$BUILD_DIR/deploy.sh
