@@ -21,6 +21,6 @@ echo ">> jar file : $JAR_NAME"
 JAVA_OPTION=-Dspring.profiles.active=prod
 
 BUILD_NAME=$(echo "$JAR_NAME" | cut -f 1 -d '.')
-nohup java $JAVA_OPTION -jar "$REPO/build/$JAR_NAME" > "$HOME/app/log/back-$BUILD_NAME.log" &
+nohup java $JAVA_OPTION -jar "$REPO/$JAR_NAME" > "$HOME/app/log/back-$BUILD_NAME.log" &
 
 echo "> 배포 완료"
