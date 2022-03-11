@@ -69,6 +69,8 @@ jobs:
       - name: Set build name
         run: |
           echo "BUILD_NAME=$(date '+%Y-%m-%d-%s')_$(git rev-parse --short $GITHUB_SHA)" >> $GITHUB_ENV
+      - name: Set build dir
+        run: |
           echo "BUILD_DIR=~/app/build/$BUILD_NAME" >> $GITHUB_ENV
       - name: Copy build file to GCP
         run: |
