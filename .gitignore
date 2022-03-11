@@ -38,6 +38,6 @@ out/
 
 ### properties ###
 *.properties
-*.yml
+src/**/*.yml
 !application.yml
 !application.properties
