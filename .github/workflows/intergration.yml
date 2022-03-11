@@ -9,7 +9,7 @@ name: CI - Test & Build
 
 on:
   push:
-    branches: [ dev, master ]
+    branches: [ dev ]
   pull_request:
     branches: [ dev, master ]
 jobs:
@@ -35,13 +35,3 @@ jobs:
       uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
       with:
         arguments: build
-    - name: Upload build file to artifact
-      run: |
-        mkdir upload
-        cp script/deploy.sh upload/
-        cp build/libs/*.jar upload/
-    - name: Upload build file
-      uses: actions/upload-artifact@v3
-      with:
-        name: build-file
-        path: upload/
