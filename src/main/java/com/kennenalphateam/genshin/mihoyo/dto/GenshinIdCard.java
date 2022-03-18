@@ -1,6 +1,6 @@
 package com.kennenalphateam.genshin.mihoyo.dto;
 
-import com.kennenalphateam.genshin.auth.SessionUser;
+import com.kennenalphateam.genshin.auth.jwt.JwtUser;
 import lombok.Data;
 
 @Data
@@ -13,8 +13,8 @@ public class GenshinIdCard {
         this.nickname = mihoyoGameCard.getNickname();
     }
 
-    public GenshinIdCard(SessionUser sessionUser) {
-        this.genshinUid = sessionUser.getGenshinUid();
-        this.nickname = sessionUser.getNickname();
+    public GenshinIdCard(JwtUser user) {
+        this.genshinUid = user.getGenshinUid();
+        this.nickname = user.getNickname();
     }
 }

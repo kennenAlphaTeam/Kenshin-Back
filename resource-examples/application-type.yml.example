@@ -19,3 +19,14 @@ mihoyo:
   rpc-client_type: 4
   rpc-app_version: 1.5.0
   rpc-language: ko-kr
+
+# jwt 설정
+jwt:
+  access:
+    secret: secret
+    validity-in-seconds: 3600 # 초 단위
+
+# swagger app info
+app:
+  name: name
+  version: version
