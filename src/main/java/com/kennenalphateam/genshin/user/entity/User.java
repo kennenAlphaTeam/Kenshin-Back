@@ -1,7 +1,5 @@
 package com.kennenalphateam.genshin.user.entity;
 
-import com.kennenalphateam.genshin.error.ErrorCode;
-import com.kennenalphateam.genshin.error.ErrorException;
 import com.kennenalphateam.genshin.mihoyo.MihoyoUtils;
 import com.kennenalphateam.genshin.mihoyo.dto.GenshinIdCard;
 import com.kennenalphateam.genshin.user.util.OAuthType;

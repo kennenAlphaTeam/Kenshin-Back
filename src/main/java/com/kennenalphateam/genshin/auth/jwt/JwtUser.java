@@ -1,9 +1,9 @@
-package com.kennenalphateam.genshin.auth;
+package com.kennenalphateam.genshin.auth.jwt;
 
 import com.kennenalphateam.genshin.error.ErrorCode;
 import com.kennenalphateam.genshin.error.ErrorException;
 import com.kennenalphateam.genshin.user.entity.User;
-import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,16 +11,14 @@ import java.io.Serializable;
 
 @Getter
 @NoArgsConstructor
-@Hidden
-public class SessionUser implements Serializable {
+@Schema(hidden = true)
+public class JwtUser implements Serializable {
 
     private Long userId;
-    private String mihoyoCookie;
     private String genshinUid;
     private String nickname;
 
-    public SessionUser(User user) {
-        this.mihoyoCookie = user.getMihoyoCookie();
+    public JwtUser(User user) {
         this.userId = user.getId();
         this.genshinUid = user.getGenshinUid();
         this.nickname = user.getNickname();

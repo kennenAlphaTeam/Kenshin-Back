@@ -1,6 +1,6 @@
 package com.kennenalphateam.genshin.user;
 
-import com.kennenalphateam.genshin.auth.SessionUser;
+import com.kennenalphateam.genshin.auth.jwt.JwtUser;
 import com.kennenalphateam.genshin.mihoyo.GenshinInfoService;
 import com.kennenalphateam.genshin.mihoyo.MihoyoUtils;
 import com.kennenalphateam.genshin.mihoyo.dto.GenshinIdCard;
@@ -17,22 +17,18 @@ public class UserService {
     private final UserRepository userRepository;
     private final GenshinInfoService genshinInfoService;
 
-    public User sessionUserToUser(SessionUser sessionUser) {
-        return userRepository.findById(sessionUser.getUserId()).orElseThrow();
+    public User jwtUserToUser(JwtUser jwtUser) {
+        return userRepository.findById(jwtUser.getUserId()).orElseThrow();
     }
 
-    public SessionUser updateUserInfo(SessionUser sessionUser, UserCookieDto dto) {
+    public JwtUser updateUserInfo(JwtUser jwtUser, UserCookieDto dto) {
         String cookie = MihoyoUtils.minifyMihoyoCookie(dto.getCookie());
-        User user = sessionUserToUser(sessionUser);
+        User user = jwtUserToUser(jwtUser);
         GenshinIdCard genshinIdCard = genshinInfoService.getGenshinUidFromCookie(cookie);
 
         user.updateCookie(cookie);
         user.updateGenshinId(genshinIdCard);
         userRepository.save(user);
-        return new SessionUser(user);
-    }
-
-    public GenshinIdCard getGenshinIdCardBySessionUser(SessionUser sessionUser) {
-        return new GenshinIdCard(sessionUser);
+        return new JwtUser(user);
     }
 }
