@@ -1,7 +1,12 @@
 package com.kennenalphateam.genshin.auth;
 
+import com.kennenalphateam.genshin.auth.jwt.JwtService;
+import com.kennenalphateam.genshin.auth.jwt.JwtUser;
+import com.kennenalphateam.genshin.user.entity.User;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -14,11 +19,18 @@ import java.io.IOException;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    private final JwtService jwtService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        OAuth2User authUser = (OAuth2User) authentication.getPrincipal();
+        User user = (User) authUser.getAttributes().get("user");
+        String jwt = jwtService.generateToken(new JwtUser(user));
+        response.setHeader("Authorization", "Bearer " + jwt);
+        log.info("OAuth user login success user={}", user);
         redirectStrategy.sendRedirect(request, response, "/");
     }
 }
