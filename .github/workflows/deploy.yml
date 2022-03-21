@@ -55,8 +55,9 @@ jobs:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
-      - name: Set up sshkey
+      - name: Set up GCP env
         run: |
+          echo "ZONE=${{secrets.GCP_ZONE}}" >> $GITHUB_ENV
           echo "${{secrets.GCP_SSH_KEY}}" > gcp_ssh_key
           echo "${{secrets.GCP_SSH_KEY_PUB}}" > gcp_ssh_key.pub
           chmod 600 gcp_ssh_key
@@ -77,10 +78,10 @@ jobs:
           MKDIR_COMMAND="mkdir -p ~/app/build/$BUILD_NAME"
           echo "mkdir command = $MKDIR_COMMAND"
           echo "build file path = $BUILD_DIR/$BUILD_NAME"
-          gcloud compute ssh --zone us-west4-b --ssh-key-file gcp_ssh_key ka@genshin --command "$MKDIR_COMMAND"
-          gcloud compute scp --zone us-west4-b --ssh-key-file gcp_ssh_key upload/*.jar ka@genshin:$BUILD_DIR/$BUILD_NAME.jar
-          gcloud compute scp --zone us-west4-b --ssh-key-file gcp_ssh_key upload/deploy.sh ka@genshin:$BUILD_DIR/deploy.sh
-          gcloud compute ssh --zone us-west4-b --ssh-key-file gcp_ssh_key ka@genshin --command "chmod +x $BUILD_DIR/deploy.sh"
+          gcloud compute ssh --zone $ZONE --ssh-key-file gcp_ssh_key ka@genshin --command "$MKDIR_COMMAND"
+          gcloud compute scp --zone $ZONE --ssh-key-file gcp_ssh_key upload/*.jar ka@genshin:$BUILD_DIR/$BUILD_NAME.jar
+          gcloud compute scp --zone $ZONE --ssh-key-file gcp_ssh_key upload/deploy.sh ka@genshin:$BUILD_DIR/deploy.sh
+          gcloud compute ssh --zone $ZONE --ssh-key-file gcp_ssh_key ka@genshin --command "chmod +x $BUILD_DIR/deploy.sh"
       - name: Deploy build file to GCP
         run: |
-          gcloud compute ssh --zone us-west4-b --ssh-key-file gcp_ssh_key ka@genshin --command "sh $BUILD_DIR/deploy.sh"
+          gcloud compute ssh --zone $ZONE --ssh-key-file gcp_ssh_key ka@genshin --command "sh $BUILD_DIR/deploy.sh"
