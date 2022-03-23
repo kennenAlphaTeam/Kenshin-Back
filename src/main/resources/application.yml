@@ -5,3 +5,14 @@ spring:
   flyway:
     locations: classpath:db/migration/
 
+---
+spring:
+  profiles: local
+
+server:
+  ssl:
+    enabled: true
+    key-store: local-ssh-keystore.p12
+    key-store-password: password
+    key-store-type: PKCS12
+    key-alias: local-ssl
