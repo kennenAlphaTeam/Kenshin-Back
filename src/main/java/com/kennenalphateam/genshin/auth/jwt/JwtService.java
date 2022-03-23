@@ -18,9 +18,11 @@ import java.util.Date;
 @Slf4j
 public class JwtService {
 
+    public static final String JWT_COOKIE_NAME = "uinfo";
     private static final String USER_CLAIM_NAME = "user";
     private final Key signKey;
-    private final long validityInSeconds;
+    public final long validityInSeconds;
+
     @Autowired
     JwtService(@Value("${jwt.access.secret}") String secret,
                @Value("${jwt.access.validity-in-seconds}") long validityInSeconds) {

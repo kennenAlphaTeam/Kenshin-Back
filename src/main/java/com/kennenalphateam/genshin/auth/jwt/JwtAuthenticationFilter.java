@@ -10,9 +10,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+
+import static com.kennenalphateam.genshin.auth.jwt.JwtService.JWT_COOKIE_NAME;
 
 @Slf4j
 @Component
@@ -45,9 +49,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.isNotEmpty(bearerToken) && bearerToken.startsWith("Bearer "))
-            return bearerToken.substring("Bearer ".length());
-        return null;
+        return Arrays.stream(request.getCookies())
+                .filter(c -> c.getName().equals(JWT_COOKIE_NAME))
+                .map(Cookie::getValue).findFirst()
+                .orElse(null);
     }
 }

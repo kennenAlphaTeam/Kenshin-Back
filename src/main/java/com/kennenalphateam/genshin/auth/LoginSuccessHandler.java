@@ -13,9 +13,12 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+import static com.kennenalphateam.genshin.auth.jwt.JwtService.JWT_COOKIE_NAME;
 
 @Component
 @Slf4j
@@ -29,8 +32,18 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         OAuth2User authUser = (OAuth2User) authentication.getPrincipal();
         User user = (User) authUser.getAttributes().get("user");
         String jwt = jwtService.generateToken(new JwtUser(user));
-        response.setHeader("Authorization", "Bearer " + jwt);
+
         log.info("OAuth user login success user={}", user);
+        setJwtToResponse(jwt, response);
         redirectStrategy.sendRedirect(request, response, "/");
+    }
+
+    private void setJwtToResponse(String jwt, HttpServletResponse response) {
+        Cookie jwtCookie = new Cookie(JWT_COOKIE_NAME, jwt);
+        jwtCookie.setMaxAge((int) jwtService.validityInSeconds);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setPath("/");
+        jwtCookie.setSecure(true);
+        response.addCookie(jwtCookie);
     }
 }

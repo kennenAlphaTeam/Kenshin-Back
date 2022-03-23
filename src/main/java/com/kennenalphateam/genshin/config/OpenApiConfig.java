@@ -5,6 +5,8 @@ import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.OAuthFlow;
+import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -21,27 +25,20 @@ public class OpenApiConfig {
     private String appName;
     @Value("${app.version:0.0.1}")
     private String appVersion;
+    @Value("${app.forwarded-prefix:/}")
+    private String serverPrefix;
 
     @Bean
     public OpenAPI openAPI() {
-        final String securitySchemeName = "Jwt Auth";
         final String apiTitle = String.format("%s API", StringUtils.capitalize(appName));
-        return new OpenAPI()
-                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
-                .components(
-                        new Components()
-                                .addSecuritySchemes(securitySchemeName,
-                                        new SecurityScheme()
-                                                .name(securitySchemeName)
-                                                .type(SecurityScheme.Type.HTTP)
-                                                .scheme("bearer")
-                                                .bearerFormat("JWT")
-                                )
+        if (!serverPrefix.endsWith("/"))
+            serverPrefix = serverPrefix + "/";
+        final String googleLoginUrl = serverPrefix + "auth/oauth/login/google";
 
-                )
+        return new OpenAPI()
                 .externalDocs(
                         new ExternalDocumentation()
-                                .url("/auth/oauth/login/google")
+                                .url(googleLoginUrl)
                                 .description("Google Login")
                 )
                 .info(new Info().title(apiTitle).version(appVersion));
