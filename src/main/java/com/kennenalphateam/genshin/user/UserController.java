@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 @Slf4j
 @RequestMapping("user")
 @RestController
@@ -20,17 +23,18 @@ public class UserController {
     private final JwtService jwtService;
 
     @PutMapping("me/cookie")
-    ResponseEntity<GenshinIdCard> updateUserCookie(@AuthenticationPrincipal JwtUser user, @RequestBody UserCookieDto dto) {
+    ResponseEntity<GenshinIdCard> updateUserCookie(@AuthenticationPrincipal JwtUser user, @RequestBody UserCookieDto dto, HttpServletResponse response) {
         JwtUser updatedUser = userService.updateUserInfo(user, dto);
 
-        String updatedToken = jwtService.generateToken(updatedUser);
+        Cookie updatedCookie = jwtService.generateTokenCookie(updatedUser);
+        response.addCookie(updatedCookie);
         return ResponseEntity.ok()
-                .header("Authorization", "Bearer " + updatedToken)
                 .body(new GenshinIdCard(updatedUser));
     }
 
     @GetMapping("me/genshinIdCard")
     public GenshinIdCard getGenshinIdCard(@AuthenticationPrincipal JwtUser user) {
+        user.checkRegisteredGenshinUser();
         return new GenshinIdCard(user);
     }
 }

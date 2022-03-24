@@ -35,6 +35,7 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
         if (!(authentication.getPrincipal() instanceof JwtUser))
             throw new ErrorException(ErrorCode.USER_UNAUTHORIZED_ERROR);
         JwtUser jwtUser = (JwtUser) authentication.getPrincipal();
+        jwtUser.checkRegisteredGenshinUser();
         return userService.jwtUserToUser(jwtUser);
     }
 }
