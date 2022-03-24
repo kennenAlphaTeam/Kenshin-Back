@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@RequestMapping("mihoyo")
+@RequestMapping(value = "mihoyo", produces = "application/json")
 @RestController
 @RequiredArgsConstructor
 public class MihoyoController {
