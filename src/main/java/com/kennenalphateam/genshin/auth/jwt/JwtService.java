@@ -10,17 +10,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.Cookie;
 import java.security.Key;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Date;
 
 @Component
 @Slf4j
 public class JwtService {
 
+    private static final String JWT_COOKIE_NAME = "uinfo";
     private static final String USER_CLAIM_NAME = "user";
     private final Key signKey;
     private final long validityInSeconds;
+
     @Autowired
     JwtService(@Value("${jwt.access.secret}") String secret,
                @Value("${jwt.access.validity-in-seconds}") long validityInSeconds) {
@@ -48,5 +52,21 @@ public class JwtService {
                 .build();
         parser.isSigned(token);
         return parser.parseClaimsJws(token).getBody().get(USER_CLAIM_NAME, JwtUser.class);
+    }
+
+    public Cookie generateTokenCookie(JwtUser user) {
+        Cookie cookie = new Cookie(JWT_COOKIE_NAME, generateToken(user));
+        cookie.setMaxAge((int) validityInSeconds);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setSecure(true);
+        return cookie;
+    }
+
+    public String getJwtFromCookies(Cookie[] cookies) {
+        return Arrays.stream(cookies)
+                .filter(c -> c.getName().equals(JWT_COOKIE_NAME))
+                .map(Cookie::getValue).findFirst()
+                .orElse(null);
     }
 }

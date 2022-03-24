@@ -25,12 +25,12 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtService jwtService;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User authUser = (OAuth2User) authentication.getPrincipal();
         User user = (User) authUser.getAttributes().get("user");
-        String jwt = jwtService.generateToken(new JwtUser(user));
-        response.setHeader("Authorization", "Bearer " + jwt);
+
         log.info("OAuth user login success user={}", user);
+        response.addCookie(jwtService.generateTokenCookie(new JwtUser(user)));
         redirectStrategy.sendRedirect(request, response, "/");
     }
 }

@@ -30,3 +30,4 @@ jwt:
 app:
   name: name
   version: version
+  forwarded-prefix: ex # 예) domain/ex/user/, #domain/ex/auth
