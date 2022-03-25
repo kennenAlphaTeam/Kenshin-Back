@@ -16,6 +16,7 @@ public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomOAuth2UserService oAuth2UserService;
     private final LoginSuccessHandler loginSuccessHandler;
+    private final LoginFailureHandler loginFailureHandler;
     private final UserAuthenticationEntryPoint userAuthenticationEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -43,6 +44,7 @@ public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
                         .userService(oAuth2UserService)
                     .and()
                     .successHandler(loginSuccessHandler)
+                    .failureHandler(loginFailureHandler)
                     .permitAll()
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter, OAuth2LoginAuthenticationFilter.class)
