@@ -8,8 +8,10 @@ public class UrlUtils {
         redirectUrl.append(serverRequestUrl.getProtocol());
         redirectUrl.append("://");
         redirectUrl.append(serverRequestUrl.getHost());
-        redirectUrl.append(":");
-        redirectUrl.append(serverRequestUrl.getPort());
+        if (serverRequestUrl.getPort() != -1) {
+            redirectUrl.append(":");
+            redirectUrl.append(serverRequestUrl.getPort());
+        }
         if (!targetEndpoint.startsWith("/"))
             redirectUrl.append("/");
         redirectUrl.append(targetEndpoint);
