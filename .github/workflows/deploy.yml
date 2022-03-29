@@ -84,4 +84,4 @@ jobs:
           gcloud compute ssh --zone $ZONE --ssh-key-file gcp_ssh_key ka@genshin --command "chmod +x $BUILD_DIR/deploy.sh"
       - name: Deploy build file to GCP
         run: |
-          gcloud compute ssh --zone $ZONE --ssh-key-file gcp_ssh_key ka@genshin --command "sh $BUILD_DIR/deploy.sh"
+          gcloud compute ssh --zone $ZONE --ssh-key-file gcp_ssh_key ka@genshin --command "bash $BUILD_DIR/deploy.sh"
