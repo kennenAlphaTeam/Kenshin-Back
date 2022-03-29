@@ -26,7 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return isMatchesPath(request.getServletPath(), "/swagger*", "/*.js", "/*.ico", "/api-docs");
+        return isMatchesPath(request.getServletPath(), "/swagger*", "/*.js", "/*.ico", "/api-docs", "/actuator/*");
     }
 
     private boolean isMatchesPath(String path, String... patterns) {
