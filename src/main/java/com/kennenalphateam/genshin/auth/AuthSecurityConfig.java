@@ -27,7 +27,8 @@ public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                    .antMatchers("/swagger-ui/*", "/api-docs*", "/actuator/*").permitAll()
+                    .antMatchers("/swagger-ui/*", "/api-docs/",
+                            "/api-docs/*","/actuator/*").permitAll()
                     .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
