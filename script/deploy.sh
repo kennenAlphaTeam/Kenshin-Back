@@ -23,16 +23,29 @@ JAVA_OPTION=-Dspring.profiles.active=prod
 BUILD_NAME=$(echo "$JAR_NAME" | cut -f 1 -d '.')
 nohup java $JAVA_OPTION -jar "$REPO/$JAR_NAME" > "$HOME/app/log/back-$BUILD_NAME.log" &
 
-sleep 10
+echo "> 어플 구동 확인"
+i=1
+IS_DONE=1
+while [ $i -le 5 ]
+do
+  echo ">> $i 번째 시도"
+  sleep 5
+  HEALTH1=$(curl -s http://127.0.0.1:8080/actuator/health)
+  HEALTH2=$(curl -s https://127.0.0.1:8080/actuator/health --insecure)
+  echo "$HEALTH1 $HEALTH2" | grep UP > /dev/null
+  IS_DONE=$?
+  echo $IS_DONE
+  if [ $IS_DONE -eq 0 ]
+  then
+    break
+  fi
+  ((i++))
+done
 
-HEALTH=$(curl https://localhost:8080/actuator/health --insecure)
-echo "$HEALTH" | grep UP
-STATE=$?
-echo $STATE
-if [ $STATE -eq 0 ]
+if [ $IS_DONE -eq 0 ]
 then
-        echo "> 배포 완료"
+  echo "> 배포 완료"
 else
-        echo "> 배포 실패"
+  echo "> 배포 실패"
 fi
-exit $STATE
+exit $IS_DONE
