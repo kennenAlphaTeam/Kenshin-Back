@@ -15,13 +15,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {Exception.class})
     public ResponseEntity<ErrorResponse> handleException(Exception e, HttpServletRequest request) {
-        log.error("Unknown exception {} : {} {} {}", e.getClass().getName(), IpUtils.getIpFromRequest(request), request.getRequestURI(), e.getMessage());
+        log.error("Unknown exception {} : {} {} {}", e.getClass().getName(), IpUtils.getIpFromRequest(request), request.getRequestURI(), e.getMessage(), e);
         return ErrorResponse.toResponseEntity(ErrorCode.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(value = {ErrorException.class})
     public ResponseEntity<ErrorResponse> handleErrorException(ErrorException e, HttpServletRequest request) {
-        log.error("ErrorException {} : {} {} [{}] {}", e.getClass().getName(), IpUtils.getIpFromRequest(request), request.getRequestURI(), e.getErrorCode().getHttpStatus().value(), e.getErrorCode().getDetail());
+        log.error("ErrorException {} {} : {} {} [{}] {}", e.getClass().getName(), e.getErrorCode().name(), IpUtils.getIpFromRequest(request), request.getRequestURI(), e.getErrorCode().getHttpStatus().value(), e.getErrorCode().getDetail());
         return ErrorResponse.toResponseEntity(e.getErrorCode());
     }
 }
