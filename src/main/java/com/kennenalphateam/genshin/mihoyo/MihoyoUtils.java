@@ -3,10 +3,10 @@ package com.kennenalphateam.genshin.mihoyo;
 import com.kennenalphateam.genshin.mihoyo.exception.InvalidCookieException;
 import com.kennenalphateam.genshin.mihoyo.exception.InvalidUidException;
 import lombok.Getter;
-import okhttp3.Cookie;
 import org.apache.tomcat.util.buf.HexUtils;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
-import java.io.StringReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 public class MihoyoUtils {
 
+    public static final String REQUEST_CONTEXT_MIHOYO_COOKIE_KEY = "mihoyo.cookie";
     private static String randomString() {
         return String.format("%d", 100000 + new Random().nextInt(99999));
     }
@@ -69,6 +70,10 @@ public class MihoyoUtils {
         return Arrays.stream(cookie.split(";\\s*"))
                 .filter(s -> s.contains("ltoken=") || s.contains("ltuid="))
                 .collect(Collectors.joining(";"));
+    }
+
+    public static void updateRequestContextMihoyoCookie(String cookie) {
+        RequestContextHolder.currentRequestAttributes().setAttribute(REQUEST_CONTEXT_MIHOYO_COOKIE_KEY, cookie, RequestAttributes.SCOPE_REQUEST);
     }
 
     @Getter

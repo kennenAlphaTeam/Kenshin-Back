@@ -13,4 +13,8 @@ public class MihoyoResponse implements Serializable {
     private Integer retcode;
     private String message;
     private ObjectNode data;
+
+    public boolean isSuccess() {
+        return !(retcode == null || retcode != 0 || data == null);
+    }
 }
