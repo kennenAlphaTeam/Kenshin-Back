@@ -11,6 +11,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -35,6 +38,10 @@ class UserServiceTest {
         JwtUser jwtUser = new JwtUser(user);
         UserCookieDto cookieDto = new UserCookieDto();
         cookieDto.setCookie("ltuid=test;ltoken=test");
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+
         given(userRepository.getById(anyLong())).willReturn(user);
         given(genshinInfoService.getGenshinUidFromCookie(anyString())).willReturn(new GenshinIdCard(jwtUser));
 
