@@ -17,14 +17,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final GenshinInfoService genshinInfoService;
 
-    public User jwtUserToUser(JwtUser jwtUser) {
-        return userRepository.findById(jwtUser.getUserId()).orElseThrow();
-    }
-
     public JwtUser updateUserInfo(JwtUser jwtUser, UserCookieDto dto) {
         String cookie = MihoyoUtils.minifyMihoyoCookie(dto.getCookie());
-        User user = jwtUserToUser(jwtUser);
+        MihoyoUtils.updateRequestContextMihoyoCookie(cookie);
         GenshinIdCard genshinIdCard = genshinInfoService.getGenshinUidFromCookie(cookie);
+
+        User user = userRepository.getById(jwtUser.getUserId());
 
         user.updateCookie(cookie);
         user.updateGenshinId(genshinIdCard);

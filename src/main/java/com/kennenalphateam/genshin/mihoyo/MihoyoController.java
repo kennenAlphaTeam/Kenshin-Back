@@ -15,21 +15,21 @@ public class MihoyoController {
 
     @GetMapping("profile/{genshinUid}")
     public String getProfile(@LoginUser User user, @PathVariable String genshinUid) {
-        return mihoyoService.getProfile(genshinUid, user.getMihoyoCookie());
+        return mihoyoService.getProfile(genshinUid);
     }
 
     @GetMapping("me/profile")
     public String getMyProfile(@LoginUser User user) {
-        return  mihoyoService.getProfile(user.getGenshinUid(), user.getMihoyoCookie());
+        return mihoyoService.getProfile(user.getGenshinUid());
     }
 
     @GetMapping("me/daily-note")
     public String getDailyNote(@LoginUser User user) {
-        return mihoyoService.getDailyNote(user.getGenshinUid(), user.getMihoyoCookie());
+        return mihoyoService.getDailyNote(user.getGenshinUid());
     }
 
     @GetMapping("character")
     public String getCharacterInfoList(@LoginUser User user) {
-        return mihoyoService.getCharacterInfoList(user.getGenshinUid(), user.getMihoyoCookie());
+        return mihoyoService.getCharacterInfoList(user.getGenshinUid());
     }
 }
