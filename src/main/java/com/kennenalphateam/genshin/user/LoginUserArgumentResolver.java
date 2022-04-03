@@ -3,7 +3,9 @@ package com.kennenalphateam.genshin.user;
 import com.kennenalphateam.genshin.auth.jwt.JwtUser;
 import com.kennenalphateam.genshin.error.ErrorCode;
 import com.kennenalphateam.genshin.error.ErrorException;
+import com.kennenalphateam.genshin.mihoyo.MihoyoUtils;
 import com.kennenalphateam.genshin.user.entity.User;
+import com.kennenalphateam.genshin.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
@@ -18,7 +20,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Component
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -36,6 +38,8 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
             throw new ErrorException(ErrorCode.USER_UNAUTHORIZED_ERROR);
         JwtUser jwtUser = (JwtUser) authentication.getPrincipal();
         jwtUser.checkRegisteredGenshinUser();
-        return userService.jwtUserToUser(jwtUser);
+        User user = userRepository.getById(jwtUser.getUserId());
+        MihoyoUtils.updateRequestContextMihoyoCookie(user.getMihoyoCookie());
+        return user;
     }
 }

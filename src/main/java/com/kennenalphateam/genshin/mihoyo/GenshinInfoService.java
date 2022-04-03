@@ -2,7 +2,6 @@ package com.kennenalphateam.genshin.mihoyo;
 
 import com.kennenalphateam.genshin.mihoyo.api.MihoyoApi;
 import com.kennenalphateam.genshin.mihoyo.api.MihoyoApiException;
-import com.kennenalphateam.genshin.mihoyo.api.MihoyoRetrofitHelper;
 import com.kennenalphateam.genshin.mihoyo.dto.GenshinIdCard;
 import com.kennenalphateam.genshin.mihoyo.dto.MihoyoGameCard;
 import com.kennenalphateam.genshin.mihoyo.dto.MihoyoGameCardDto;
@@ -15,7 +14,6 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class GenshinInfoService {
     private final MihoyoApi mihoyoApi;
-    private final MihoyoRetrofitHelper helper;
 
     public GenshinIdCard getGenshinUidFromCookie(String cookie) {
         return new GenshinIdCard(getValidMihoyoGameCard(cookie));
@@ -24,7 +22,7 @@ public class GenshinInfoService {
     public MihoyoGameCard getValidMihoyoGameCard(String cookie) {
         String mihoyoUid = MihoyoUtils.getMihoyoUidFromCookie(cookie);
 
-        MihoyoGameCardDto body = helper.requestBody(mihoyoApi.getGameRecordCard(cookie, mihoyoUid), MihoyoGameCardDto.class);
+        MihoyoGameCardDto body = mihoyoApi.getGameRecordCard(mihoyoUid);
         MihoyoGameCard[] cards = body.getGameCards();
 
         if (cards.length == 0)

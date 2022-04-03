@@ -1,12 +1,12 @@
 package com.kennenalphateam.genshin.auth.jwt;
 
+import com.kennenalphateam.genshin.util.IpUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -14,7 +14,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 
 @Slf4j
 @Component
@@ -22,16 +21,6 @@ import java.util.Arrays;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final AntPathMatcher pathMatcher = new AntPathMatcher();
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return isMatchesPath(request.getServletPath(), "/swagger*", "/*.js", "/*.ico", "/api-docs", "/actuator/*");
-    }
-
-    private boolean isMatchesPath(String path, String... patterns) {
-        return Arrays.stream(patterns).anyMatch((p) -> pathMatcher.match(p, path));
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -44,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception ex) {
-            logger.error("JwtAuthentication 저장에 실패했습니다.", ex);
+            log.error("JwtAuthentication 저장에 실패했습니다 {}", IpUtils.getIpFromRequest(request), ex);
         }
 
         filterChain.doFilter(request, response);

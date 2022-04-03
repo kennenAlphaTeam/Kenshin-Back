@@ -1,20 +1,25 @@
 package com.kennenalphateam.genshin.mihoyo.api;
 
 import com.kennenalphateam.genshin.mihoyo.dto.CharacterRequest;
-import retrofit2.Call;
-import retrofit2.http.*;
+import com.kennenalphateam.genshin.mihoyo.dto.MihoyoGameCardDto;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
+
+@FeignClient(name = "mihoyo", url = "https://bbs-api-os.mihoyo.com", configuration = MihoyoFeignConfiguration.class)
 public interface MihoyoApi {
+    @GetMapping("game_record/genshin/api/index")
+    String getProfile(@RequestParam("server") String server, @RequestParam("role_id") String gensinUid);
 
-    @GET("game_record/genshin/api/index")
-    Call<MihoyoResponse> getProfile(@Header("Cookie") String cookie, @Query("server") String server, @Query("role_id") String gensinUid);
+    @GetMapping("game_record/genshin/api/dailyNote")
+    String getDailyNote(@RequestParam("server") String server, @RequestParam("role_id") String gensinUid);
 
-    @GET("game_record/genshin/api/dailyNote")
-    Call<MihoyoResponse> getDailyNote(@Header("Cookie") String cookie, @Query("server") String server, @Query("role_id") String gensinUid);
+    @GetMapping("game_record/card/wapi/getGameRecordCard")
+    MihoyoGameCardDto getGameRecordCard(@RequestParam("uid") String mihoyoId);
 
-    @GET("game_record/card/wapi/getGameRecordCard")
-    Call<MihoyoResponse> getGameRecordCard(@Header("Cookie") String cookie, @Query("uid") String mihoyoId);
-
-    @POST("game_record/genshin/api/character")
-    Call<MihoyoResponse> getCharacterInfoList(@Header("Cookie") String cookie, @Body CharacterRequest request);
+    @PostMapping("game_record/genshin/api/character")
+    String getCharacterInfoList(@RequestBody CharacterRequest request);
 }

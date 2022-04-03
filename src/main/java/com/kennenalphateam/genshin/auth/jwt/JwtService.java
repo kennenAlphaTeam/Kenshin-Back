@@ -64,6 +64,8 @@ public class JwtService {
     }
 
     public String getJwtFromCookies(Cookie[] cookies) {
+        if (cookies == null)
+            return null;
         return Arrays.stream(cookies)
                 .filter(c -> c.getName().equals(JWT_COOKIE_NAME))
                 .map(Cookie::getValue).findFirst()
