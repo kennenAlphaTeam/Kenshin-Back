@@ -10,6 +10,7 @@ name: CD - Deploy Application to GCP
 on:
   push:
     branches: [ master ]
+  workflow_dispatch:
 jobs:
   test_and_build:
     runs-on: ubuntu-latest
@@ -83,5 +84,20 @@ jobs:
           gcloud compute scp --zone $ZONE --ssh-key-file gcp_ssh_key upload/deploy.sh ka@genshin:$BUILD_DIR/deploy.sh
           gcloud compute ssh --zone $ZONE --ssh-key-file gcp_ssh_key ka@genshin --command "chmod +x $BUILD_DIR/deploy.sh"
       - name: Deploy build file to GCP
+        id: deploy
         run: |
           gcloud compute ssh --zone $ZONE --ssh-key-file gcp_ssh_key ka@genshin --command "bash $BUILD_DIR/deploy.sh"
+      - name: Set success color
+        if: always()
+        run: | 
+          if [[ ${{ steps.deploy.outcome }} == "success" ]]; then 
+            echo "STATUS_COLOR=7667570" >> "$GITHUB_ENV"
+          else 
+            echo "STATUS_COLOR=16735560" >> "$GITHUB_ENV"
+          fi
+      - name: Discord notification
+        if: always()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_EMBEDS: '[{"title":"${{github.repository}}","color":${{env.STATUS_COLOR}},"url":"${{github.server_url}}/${{github.repository}}","fields":[{"name":"WorkFlow","value":"${{github.workflow}}"},{"name":"Commit","value":"${{github.sha}}"}]}]'
+        uses: Ilshidur/action-discord@master  
