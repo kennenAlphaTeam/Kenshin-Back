@@ -1,6 +1,7 @@
 package com.kennenalphateam.genshin.util;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import java.util.Arrays;
 import java.util.Base64;
 
 @Component
+@Slf4j
 public class CryptService {
 
     public static final String alg = "AES/GCM/NoPadding";
@@ -24,14 +26,16 @@ public class CryptService {
 
     @Autowired
     public CryptService(
-            @Value("crypt.secret") String secret) {
+            @Value("${crypt.secret}") String secret) {
+        if (secret.length() != 32)
+            throw new IllegalArgumentException("Secret length must be 32byte");
         this.secret = new SecretKeySpec(secret.getBytes(), "AES");
     }
 
     @SneakyThrows
     public String encrypt(String data) {
         if (StringUtils.isBlank(data))
-            throw new IllegalArgumentException("Data must not empty");
+            return data;
 
         Cipher cipher = Cipher.getInstance(alg);
         byte[] iv = new byte[GCM_IV_LENGTH];
@@ -50,7 +54,7 @@ public class CryptService {
     @SneakyThrows
     public String decrypt(String encryptedData) {
         if (StringUtils.isBlank(encryptedData))
-            throw new IllegalArgumentException("Data must not empty");
+            return encryptedData;
 
         Cipher cipher = Cipher.getInstance(alg);
         byte[] data = Base64.getDecoder().decode(encryptedData);

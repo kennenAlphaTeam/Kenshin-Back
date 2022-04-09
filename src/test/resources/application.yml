@@ -27,6 +27,9 @@ mihoyo:
   rpc-app_version: 1.5.0
   rpc-language: ko-kr
 
+crypt:
+  secret: thisissecretthisissecretthisisse
+
 jwt:
   access:
     secret: thisissecretthisissecretthisissecretthisissecret

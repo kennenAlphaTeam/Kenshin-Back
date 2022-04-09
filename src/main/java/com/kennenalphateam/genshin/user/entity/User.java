@@ -2,6 +2,7 @@ package com.kennenalphateam.genshin.user.entity;
 
 import com.kennenalphateam.genshin.mihoyo.MihoyoUtils;
 import com.kennenalphateam.genshin.mihoyo.dto.GenshinIdCard;
+import com.kennenalphateam.genshin.user.util.MihoyoCookieConverter;
 import com.kennenalphateam.genshin.user.util.OAuthType;
 import com.kennenalphateam.genshin.user.util.OAuthTypeConverter;
 import com.kennenalphateam.genshin.util.BaseTimeEntity;
@@ -30,6 +31,7 @@ public class User extends BaseTimeEntity {
     private OAuthType oauthType;
 
     @Column(name = "mihoyo_cookie")
+    @Convert(converter = MihoyoCookieConverter.class)
     @Setter
     private String mihoyoCookie;
 

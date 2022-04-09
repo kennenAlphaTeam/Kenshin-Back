@@ -20,6 +20,10 @@ mihoyo:
   rpc-app_version: 1.5.0
   rpc-language: ko-kr
 
+# db secret
+crypt:
+  secret: secret
+
 # jwt 설정
 jwt:
   access:
