@@ -11,8 +11,17 @@ on:
   push:
     branches: [ master ]
   workflow_dispatch:
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
+  GKE_ZONE: ${{ secrets.GKE_ZONE }}
+  DEPLOYMENT_NAME: back
+  IMAGE: kenshin-back
+  ARTIFACT_DOCKER: ${{ secrets.ARTIFACT_DOCKER }}
+  REPO: ${{ secrets.ARTIFACT_REPO }}
+
 jobs:
-  test_and_build:
+  build_and_deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -22,71 +31,68 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: 'gradle'
+
+      # Setup gcloud CLI
+      - uses: google-github-actions/setup-gcloud@94337306dda8180d967a56932ceb4ddcf01edae7
+        with:
+          service_account_key: ${{ secrets.GKE_SA_KEY }}
+          project_id: ${{ secrets.GKE_PROJECT }}
+
+      # Configure Docker to use the gcloud command-line tool as a credential
+      # helper for authentication
+      - name: gcloud docker auth
+        run: |-
+          gcloud --quiet auth configure-docker $ARTIFACT_DOCKER
+
+      # Get the GKE credentials so we can deploy to the cluster
+      - uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER }}
+          location: ${{ env.GKE_ZONE }}
+          credentials: ${{ secrets.GKE_SA_KEY }}
+
       - name: Set up yml file
         run: |
           echo "${{ secrets.APPLICATION_OAUTH_YML }}" >> src/main/resources/application-oauth.yml
           echo "${{ secrets.APPLICATION_PROD_YML }}" >> src/main/resources/application-prod.yml
+
       - name: Test with Gradle
         uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
         with:
           arguments: test
+
       - name: Build With Gradle
         uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
         with:
           arguments: build
-      - name: Prepare build file
-        run: |
-          mkdir upload
-          cp script/deploy.sh upload/
-          cp build/libs/*.jar upload/
-      - name: Upload build file
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-file
-          path: upload/
-  deploy:
-    needs: test_and_build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - id: auth
-        name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v0
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
-      - name: Set up GCP env
-        run: |
-          echo "ZONE=${{secrets.GCP_ZONE}}" >> $GITHUB_ENV
-          echo "${{secrets.GCP_SSH_KEY}}" > gcp_ssh_key
-          echo "${{secrets.GCP_SSH_KEY_PUB}}" > gcp_ssh_key.pub
-          chmod 600 gcp_ssh_key
-          chmod 600 gcp_ssh_key.pub
-      - name: Download build file
-        uses: actions/download-artifact@v3
-        with:
-          name: build-file
-          path: upload
-      - name: Set build name
-        run: |
-          echo "BUILD_NAME=$(date '+%Y-%m-%d-%s')_$(git rev-parse --short $GITHUB_SHA)" >> $GITHUB_ENV
-      - name: Set build dir
-        run: |
-          echo "BUILD_DIR=~/app/build/$BUILD_NAME" >> $GITHUB_ENV
-      - name: Copy build file to GCP
-        run: |
-          MKDIR_COMMAND="mkdir -p ~/app/build/$BUILD_NAME"
-          echo "mkdir command = $MKDIR_COMMAND"
-          echo "build file path = $BUILD_DIR/$BUILD_NAME"
-          gcloud compute ssh --zone $ZONE --ssh-key-file gcp_ssh_key ka@genshin --command "$MKDIR_COMMAND"
-          gcloud compute scp --zone $ZONE --ssh-key-file gcp_ssh_key upload/*.jar ka@genshin:$BUILD_DIR/$BUILD_NAME.jar
-          gcloud compute scp --zone $ZONE --ssh-key-file gcp_ssh_key upload/deploy.sh ka@genshin:$BUILD_DIR/deploy.sh
-          gcloud compute ssh --zone $ZONE --ssh-key-file gcp_ssh_key ka@genshin --command "chmod +x $BUILD_DIR/deploy.sh"
-      - name: Deploy build file to GCP
+
+      # Build the Docker image
+      - name: Build
+        run: |-
+          docker build \
+          --tag "$REPO/$IMAGE:$GITHUB_SHA" \
+          .
+
+      # Push the Docker image to Google Container Registry
+      - name: Publish
+        run: |-
+          docker push "$REPO/$IMAGE:$GITHUB_SHA"
+
+      # Set up kustomize
+      - name: Set up Kustomize
+        run: |-
+          curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+          chmod u+x ./kustomize
+
+      # Deploy the Docker image to the GKE cluster
+      - name: Deploy
         id: deploy
-        run: |
-          gcloud compute ssh --zone $ZONE --ssh-key-file gcp_ssh_key ka@genshin --command "bash $BUILD_DIR/deploy.sh"
+        run: |-
+          ./kustomize edit set image REPO/IMAGE:TAG=$REPO/$IMAGE:$GITHUB_SHA
+          ./kustomize build . | kubectl apply -f -
+          kubectl rollout status deployment/$DEPLOYMENT_NAME
+
+      # discord notify
       - name: Set success color
         if: always()
         run: | 

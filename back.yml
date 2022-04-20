@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: back
+spec:
+  selector:
+    app: back
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: back
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: back
+spec:
+  selector:
+    matchLabels:
+      app: back
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: back
+    spec:
+      containers:
+        - name: back
+          image: REPO/IMAGE:TAG
+          imagePullPolicy: IfNotPresent
+          args: ["--spring.profiles.active=prod"]
+          ports:
+            - containerPort: 8080
+              name: back
